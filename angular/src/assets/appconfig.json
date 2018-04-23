@@ -1,0 +1,4 @@
+{
+  "remoteServiceBaseUrl": "https://sageaccountingkeypayintegrationpoc001.azurewebsites.net",
+  "appBaseUrl": "https://sageaccountingkeypayintegrationpoc001_client.azurewebsites.net"
+}
