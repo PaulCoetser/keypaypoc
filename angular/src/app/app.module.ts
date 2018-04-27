@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { JsonpModule } from '@angular/http';
+import { HttpModule, JsonpModule } from '@angular/http';
 import { HttpClientModule, HttpResponse } from '@angular/common/http';
 
 import { ModalModule } from 'ngx-bootstrap';
@@ -33,6 +33,13 @@ import { SideBarNavComponent } from '@app/layout/sidebar-nav.component';
 import { SideBarFooterComponent } from '@app/layout/sidebar-footer.component';
 import { RightSideBarComponent } from '@app/layout/right-sidebar.component';
 import { MaterialInput } from '@shared/directives/material-input.directive';
+import { KeypayconfigComponent } from './keypayconfig/keypayconfig.component';
+
+
+import { KeyPayHttpInterceptor } from 'keypayHttpInterceptor';
+
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+
 
 @NgModule({
     declarations: [
@@ -40,27 +47,28 @@ import { MaterialInput } from '@shared/directives/material-input.directive';
         HomeComponent,
         AboutComponent,
         TenantsComponent,
-		CreateTenantComponent,
-		EditTenantComponent,
+        CreateTenantComponent,
+        EditTenantComponent,
         UsersComponent,
-		CreateUserComponent,
-		EditUserComponent,
-      	RolesComponent,        
-		CreateRoleComponent,
-		EditRoleComponent,
+        CreateUserComponent,
+        EditUserComponent,
+        RolesComponent,
+        CreateRoleComponent,
+        EditRoleComponent,
         TopBarComponent,
         TopBarLanguageSwitchComponent,
         SideBarUserAreaComponent,
         SideBarNavComponent,
         SideBarFooterComponent,
-        RightSideBarComponent
-    
+        RightSideBarComponent,
+        KeypayconfigComponent
     ],
     imports: [
         CommonModule,
         FormsModule,
         HttpClientModule,
         JsonpModule,
+        HttpModule,
         ModalModule.forRoot(),
         AbpModule,
         AppRoutingModule,
@@ -69,7 +77,7 @@ import { MaterialInput } from '@shared/directives/material-input.directive';
         NgxPaginationModule
     ],
     providers: [
-
+        { provide: HTTP_INTERCEPTORS, useClass: KeyPayHttpInterceptor,  multi: true },
     ]
 })
 export class AppModule { }

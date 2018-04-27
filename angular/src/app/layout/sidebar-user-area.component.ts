@@ -1,4 +1,5 @@
 ﻿import { Component, OnInit, Injector, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 import { AppComponentBase } from '@shared/app-component-base';
 import { AppAuthService } from '@shared/auth/app-auth.service';
 
@@ -13,6 +14,7 @@ export class SideBarUserAreaComponent extends AppComponentBase implements OnInit
 
     constructor(
         injector: Injector,
+        private router: Router,
         private _authService: AppAuthService
     ) {
         super(injector);
@@ -24,5 +26,9 @@ export class SideBarUserAreaComponent extends AppComponentBase implements OnInit
 
     logout(): void {
         this._authService.logout();
+    }
+
+    keypayconfig(): void {
+        this.router.navigate(['/app/keypayconfig']);
     }
 }

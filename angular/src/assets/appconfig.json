@@ -1,4 +1,5 @@
 {
-  "remoteServiceBaseUrl": "https://sageaccountingkeypayintegrationpoc001.azurewebsites.net",
-  "appBaseUrl": "https://sageaccountingkeypayintegrationpoc001_client.azurewebsites.net"
+  "remoteServiceBaseUrl": "http://localhost:21021",
+  "remoteKeyPayServiceBaseUrl": "https://staging.yourpayroll.com.au",
+  "appBaseUrl": "http://localhost:4200"
 }

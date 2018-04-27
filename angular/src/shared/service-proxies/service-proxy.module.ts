@@ -3,6 +3,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
 
 import * as ApiServiceProxies from './service-proxies';
+import * as KeyPayServiceProxies from './kp-service-proxies';
 
 @NgModule({
     providers: [
@@ -13,6 +14,8 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.TokenAuthServiceProxy,
         ApiServiceProxies.AccountServiceProxy,
         ApiServiceProxies.ConfigurationServiceProxy,
+        ApiServiceProxies.KeyPayConfigServiceProxy,
+        KeyPayServiceProxies.KeyPayServiceProxy,
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true }
     ]
 })

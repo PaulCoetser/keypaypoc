@@ -1,6 +1,7 @@
 ﻿export class AppConsts {
 
     static remoteServiceBaseUrl: string;
+    static remoteKeyPayServiceBaseUrl: string;
     static appBaseUrl: string;
 
     static readonly userManagement = {
