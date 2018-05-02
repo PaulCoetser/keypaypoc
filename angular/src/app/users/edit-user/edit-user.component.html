@@ -15,6 +15,7 @@
                     <ul class="nav nav-tabs tab-nav-right" role="tablist">
                         <li role="presentation" class="active"><a href="#edit-user-details" data-toggle="tab">User Details</a></li>
                         <li role="presentation"><a href="#edit-user-roles" data-toggle="tab">User Roles</a></li>
+                        <li role="presentation"><a href="#edit-keypay" data-toggle="tab">KeyPay Integration</a></li>
                     </ul>
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane animated fadeIn active" id="edit-user-details">
@@ -85,13 +86,39 @@
                             </div>
                         </div>
 
+                        <div role="tabpanel" class="tab-pane animated fadeIn" id="edit-keypay">
+                            <div class="row clearfix" style="margin-top:10px;">
+                                <div class="col-sm-12">
+                                    <div class="form-group form-float">
+                                        <div class="form-line">
+                                            <input id="kpApiKey" type="text" name="kpApiKey" [(ngModel)]="kpUser.kpApiKey" maxlength="128" (change)="apiChange($event)" class="validate form-control">
+                                            <label for="kpApiKey" class="form-label">{{l("ApiKey")}}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row clearfix" style="margin-top:10px;">
+                                <div class="col-sm-4">
+                                   <div class="form-group form-float">
+                                           <button id="TestKeyPayConnection" class="btn bg-pink waves-effect" (click)="testKeyPayConnection()" type="button">Test KeyPay API
+                                           </button>      
+                                           <i class="fa fa-spin fa-spinner" *ngIf="busyTesting"></i>
+                                   </div>
+                               </div>
+                               <div class="col-sm-8"></div>
+                           </div>
+                           
+                        </div>
+
+
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button [disabled]="saving" type="button" class="btn btn-default waves-effect" (click)="close()">
                         {{l("Cancel")}}
                     </button>
-                    <button [disabled]="!editUserForm.form.valid" type="submit" class="btn btn-primary waves-effect">
+                    <button [disabled]="!editUserForm.form.valid || !keyPayApiValid" type="submit" class="btn btn-primary waves-effect">
                         {{l("Save")}}
                     </button>
                 </div>

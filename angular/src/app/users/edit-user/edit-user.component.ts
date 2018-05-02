@@ -1,7 +1,9 @@
 import { Component, ViewChild, Injector, Output, EventEmitter, ElementRef } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
-import { UserServiceProxy, UserDto, RoleDto } from '@shared/service-proxies/service-proxies';
+import { UserServiceProxy, UserDto, RoleDto, KPUserDto, KeyPayConfigServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/app-component-base';
+import { AppSessionService } from '@shared/session/app-session.service';
+import { KeyPayConfigInput, KeyPayServiceProxy, KeyPayConfigOutput } from '@shared/service-proxies/kp-service-proxies';
 
 @Component({
     selector: 'edit-user-modal',
@@ -14,15 +16,21 @@ export class EditUserComponent extends AppComponentBase {
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active: boolean = false;
-    saving: boolean = false;
+    kpUser: KPUserDto = undefined;
+    active = false;
+    saving = false;
+    busyTesting = false;
+    keyPayApiValid = true;
 
     user: UserDto = null;
     roles: RoleDto[] = null;
 
     constructor(
         injector: Injector,
-        private _userService: UserServiceProxy
+        private _userService: UserServiceProxy,
+        private _appSessionService: AppSessionService,
+        private _keyPayConfigServiceProxy: KeyPayConfigServiceProxy,
+        private _keyPayServiceProxy: KeyPayServiceProxy
     ) {
         super(injector);
     }
@@ -46,15 +54,29 @@ export class EditUserComponent extends AppComponentBase {
             .subscribe(
             (result) => {
                 this.user = result;
-                this.active = true;
-                this.modal.show();
-            }
+                this.kpUser = new KPUserDto();
+                this.kpUser.init( { userId: this.user.id });
+                this._keyPayConfigServiceProxy.getRegisteredKeyPayUser(this.user.id)
+                .finally( () => {
+                    this.active = true;
+                    this.modal.show();
+                })
+                .subscribe((resultkp: KPUserDto) => {
+                  if (!(this.isEmptyObject(resultkp))) {
+                    this.kpUser = resultkp;
+                  }
+                });
+              }
             );
     }
 
     onShown(): void {
         $.AdminBSB.input.activate($(this.modalContent.nativeElement));
     }
+
+  isEmptyObject(obj) {
+    return (obj && (Object.keys(obj).length === 0));
+  }
 
     save(): void {
         var roles = [];
@@ -70,11 +92,53 @@ export class EditUserComponent extends AppComponentBase {
         this._userService.update(this.user)
             .finally(() => { this.saving = false; })
             .subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
-                this.close();
-                this.modalSave.emit(null);
+                if ( this.kpUser.kpApiKey !== undefined && this.kpUser.kpApiKey.length > 0) {
+                    // save KP User
+                    let input: KPUserDto;
+                    input = new KPUserDto();
+                    input.init( { kpApiKey: this.kpUser.kpApiKey, userId: this.user.id, kpUserId: this.kpUser.kpUserId})
+                    this._keyPayConfigServiceProxy.updateApiKey(input)
+                        .finally(() => {
+                            this.busyTesting = false;
+                        })
+                        .subscribe((result: KPUserDto) => {
+                            if (result !== undefined) {
+                                this.kpUser.id = result.id;
+                                this.notify.info('Successfully saved and updated the KeyPay APIKey');
+                                this.close();
+                                this.modalSave.emit(null);
+                            }
+                        });
+                } else  {
+                    this.notify.info(this.l('SavedSuccessfully'));
+                    this.close();
+                    this.modalSave.emit(null);
+                }
             });
     }
+
+    apiChange(event: any): void {
+        this.keyPayApiValid = ( event.target.value.length === 0);
+    }
+
+    testKeyPayConnection(): void {
+        this.busyTesting = true;
+        this.keyPayApiValid = false;
+        let input: KeyPayConfigInput;
+        input = new KeyPayConfigInput();
+        input.init( {  apiKey: this.kpUser.kpApiKey})
+        this._keyPayServiceProxy.testApiKeyForKeyPayUser(input)
+            .finally(() => {
+                this.busyTesting = false;
+            })
+            .subscribe(data => {
+                this.kpUser.kpUserId = data.id;
+                this.keyPayApiValid = true;
+                this.notify.info('Successfully validated ApiKey for this user');
+              },
+                error => this.notify.warn(error)
+            );
+      }
 
     close(): void {
         this.active = false;

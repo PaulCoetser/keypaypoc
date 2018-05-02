@@ -3,33 +3,30 @@
       <div class="card main-content">
           <div class="header">
               <h2>
-                  {{l("LinkYourKeyPayAPI")}} 
+                  Link your KeyPay ApiKey here
               </h2>
           </div>
       
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="row clearfix" style="margin-top:10px;">
               <div class="form-group form-float">
                   <div class="form-line">
                       <input type="text" name="KPUserId" class="form-control" [(ngModel)]="kpUser.kpUserId" [disabled]=true>
-                      <label class="form-label">{{l("KeyPayUserId")}}</label>
+                      <label class="form-label">KeyPay UserId</label>
                   </div>
               </div>
-              
-              <div class="form-group form-float">
-                  <div class="form-line">
-                      <input type="text" name="RefresherToken" class="form-control" [(ngModel)]="kpUser.refresherToken" [disabled]=true>
-                      <label class="form-label">{{l("RefresherToken")}}</label>
-                  </div>
-              </div>     
+            </div>
 
+            <div class="row clearfix" style="margin-top:10px;">
               <div class="form-group form-float">
                   <div class="form-line">
-                      <input type="text" name="KPApiKey" class="form-control" [(ngModel)]="kpUser.kpApiKey" required maxlength=64>
-                      <label class="form-label">{{l("KeyPayApiKey")}}</label>
+                      <input type="text" name="KPApiKey" class="form-control" [(ngModel)]="kpUser.kpApiKey"  (change)="apiChange($event)" required maxlength=128>
+                      <label class="form-label">KeyPay ApiKey</label>
                   </div>
               </div>
-       
+            </div>
 
+            <div class="row clearfix" style="margin-top:10px;">
               <div class="form-group form-float">
                   <button id="TestKeyPayConnection" class="btn bg-pink waves-effect" (click)="testKeyPayConnection()" type="button">Test KeyPay API
                   </button>      
@@ -37,6 +34,37 @@
                 </button>
                 <i class="fa fa-spin fa-spinner" *ngIf="busySaving || busyTesting"></i>
               </div>
+
+            </div>
+
+           <!--   <div class="form-group form-float">
+                <div class="form-line">
+                    <input type="text" name="Client Id" class="form-control" [(ngModel)]="clientId" >
+                    <label class="form-label">Client Id</label>
+                </div>
+            </div>    
+            
+            <div class="form-group form-float">
+                <div class="form-line">
+                    <input type="text" name="Client Secret" class="form-control" [(ngModel)]="clientSecret" >
+                    <label class="form-label">Client Secret</label>
+                </div>
+            </div>
+
+
+              <div class="form-group form-float">
+                <button id="btnAuthorise" class="btn bg-pink waves-effect" (click)="authoriseKeyPay()" type="button">Authorise KeyPay
+                </button>      
+              <i class="fa fa-spin fa-spinner" *ngIf="busyAuth"></i>
+            </div>
+
+            <div class="form-group form-float">
+                <div class="form-line">
+                    <input type="text" name="AccessToken" class="form-control" [(ngModel)]="access_token" [disabled]=true>
+                    <label class="form-label">Access Token</label>
+                </div>
+            </div>     
+        -->
 
           </div>
 

@@ -16,9 +16,10 @@ using System;
 namespace Sage.AccountingKeyPayIntegrationPOC.Migrations
 {
     [DbContext(typeof(AccountingKeyPayIntegrationPOCDbContext))]
-    partial class AccountingKeyPayIntegrationPOCDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180501015155_ChangeFieldLength")]
+    partial class ChangeFieldLength
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

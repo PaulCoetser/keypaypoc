@@ -12,8 +12,16 @@ namespace Sage.AccountingKeyPayIntegrationPOC.Authorization
             context.CreatePermission(PermissionNames.Pages_Roles, L("Roles"));
             context.CreatePermission(PermissionNames.Pages_Tenants, L("Tenants"), multiTenancySides: MultiTenancySides.Host);
 
-            context.CreatePermission(PermissionNames.Pages_KeyPayConfig, L("KeyPayConfig"));
-            context.CreatePermission(PermissionNames.Pages_KeyPayPayroll, L("KeyPayPayroll"));
+            var keyPay = context.CreatePermission("Payroll", L("Payroll"), L("KeyPay Payroll Module"));
+
+            //var keyPayConfig = keyPay.CreateChildPermission("KeyPay.Config", L("KeyPay Configuration"), L("KeyPay Configuration Module"));
+            //var keyPayPayroll = keyPay.CreateChildPermission("KeyPay.Payroll", L("KeyPay Payroll"), L("KeyPay Payroll Module"));
+            //keyPayPayroll.CreateChildPermission("KeyPay.Payroll.CompanySetup", L("KeyPay Payroll Company Setup"), L("KeyPay Payroll Company Setup"));
+            //keyPayPayroll.CreateChildPermission("KeyPay.Payroll.ChartOfAccounts", L("KeyPay Payroll Chart of Accounts"), L("KeyPay Payroll Chart of Accounts"));
+            //keyPayConfig.CreateChildPermission("Administration.UserManagement.CreateUser");
+
+            //context.CreatePermission(PermissionNames.Pages_KeyPayConfig, L("KeyPayConfig"));
+            //context.CreatePermission(PermissionNames.Pages_KeyPayPayroll, L("KeyPayPayroll"));
         }
 
         private static ILocalizableString L(string name)

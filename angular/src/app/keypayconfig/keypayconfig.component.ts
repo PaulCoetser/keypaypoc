@@ -9,6 +9,11 @@ import { timeout } from 'q';
 
 import { KeyPayConfigInput,
   KeyPayConfigOutput,
+  //KPAutorisationInput,
+  //KPAutorisationTokenInput,
+  //KPAutorisationTokenOutput,
+  //KPAutorisationRefreshTokenInput,
+  //KPAutorisationRefreshTokenOutput,
   KeyPayServiceProxy} from '@shared/service-proxies/kp-service-proxies';
 
 @Component({
@@ -24,6 +29,10 @@ export class KeypayconfigComponent  extends AppComponentBase  implements OnInit 
   busyTesting = false;
   busySaving = false;
   keyPayInput: KeyPayConfigInput = undefined;
+  busyAuth = false;
+  clientId: string;
+  clientSecret: string;
+  access_token: string | undefined;
 
   constructor(private injector: Injector,
               private _permissionChecker: PermissionCheckerService,
@@ -37,6 +46,8 @@ export class KeypayconfigComponent  extends AppComponentBase  implements OnInit 
     ngOnInit(): void {
       // load user
       this.getKpUser();
+      this.clientId = "{ClientId to be supplied}";
+      this.clientSecret = "{ClientSecret to be supplied}"
   }
 
   getKpUser(): void {
@@ -49,7 +60,7 @@ export class KeypayconfigComponent  extends AppComponentBase  implements OnInit 
       this.active = true;
     })
     .subscribe((result: KPUserDto) => {
-      if (!(this.isEmptyObject(result))) {
+      if (result.id !== undefined) {
         this.kpUser = result;
       }
     });
@@ -57,7 +68,7 @@ export class KeypayconfigComponent  extends AppComponentBase  implements OnInit 
 
   initNewKpUser(): void {
     this.kpUser = new KPUserDto();
-    this.kpUser.init( { userId: this._appSessionService.userId, kpApiKey: 'TVdsVlZEZHZOWGxsYkVsd2NIcGpiM0JGTlZaUk1XY3lVRm80WWxjNWJXcG1OVXBzY2swMFIwRkJia0pJVVVoM1MwZFdXWEZHUzNZNVNrNW5TbXh0ZVE6' });
+    this.kpUser.init( { userId: this._appSessionService.userId, kpApiKey: '' });
   }
 
   isEmptyObject(obj) {
@@ -66,11 +77,20 @@ export class KeypayconfigComponent  extends AppComponentBase  implements OnInit 
 
   save(): void {
     this.busySaving = true;
-    setTimeout(() => {
-
-      this.busySaving = false;
-
-    }, 1000);
+      let input: KPUserDto;
+      input = new KPUserDto();
+      input.init( { kpApiKey: this.kpUser.kpApiKey, userId: this._appSessionService.userId, kpUserId: this.kpUser.kpUserId})
+      this._keyPayConfigServiceProxy.updateApiKey(input)
+          .finally(() => {
+              this.busyTesting = false;
+              this.busySaving = false;
+          })
+          .subscribe((result: KPUserDto) => {
+              if (result !== undefined) {
+                  this.kpUser.id = result.id;
+                  this.notify.info('Successfully updated the KeyPay APIKey');
+              }
+          });
   }
 
   testKeyPayConnection(): void {
@@ -78,16 +98,110 @@ export class KeypayconfigComponent  extends AppComponentBase  implements OnInit 
     this.keyPayApiValid = false;
     let input: KeyPayConfigInput;
     input = new KeyPayConfigInput();
-    input.init( {apiKey: this.kpUser.kpApiKey})
-    this._keyPayServiceProxy.testApiKeyForKeyPayUser(input)
+    input.init( {  apiKey: this.kpUser.kpApiKey})
+
+      this._keyPayServiceProxy.testApiKeyForKeyPayUser(input)
         .finally(() => {
             this.busyTesting = false;
         })
-        .subscribe((result: KeyPayConfigOutput) => {
+          .subscribe(data => {
+                          this.kpUser.kpUserId = data.id;
+                          this.keyPayApiValid = true;
+                          this.notify.info('Successfully validated ApiKey for this user');
+                        },
+                     error => this.notify.warn(error)
+          );
+  }
+
+  apiChange(event: any): void {
+    this.keyPayApiValid = ( event.target.value.length === 0);
+}
+
+  /*//step 1
+  authoriseKeyPay(): void {
+    this.busyAuth = true;
+    this.access_token = undefined;
+    
+    let input: KPAutorisationInput;
+    input = new KPAutorisationInput();
+    input.init( { })
+    this._keyPayServiceProxy.clientAutoriseKeyPay(input)
+        .finally(() => {
+            this.busyTesting = false;
+        })
+        .subscribe((result: string) => {
             if (result !== undefined) {
-                this.kpUser.id = result.id;
-                this.notify.info(this.l('SuccessfullyValidatedApiKeyForUser'));
+                this.notify.info('Successfully authorised client... Onto getting the token.');
             }
         });
+
+    this.busyAuth = false;
   }
+
+
+
+  //step 2
+  authoriseTokenKeyPay(): void {
+    this.busyAuth = true;
+    this.access_token = undefined;
+    
+    let input: KPAutorisationTokenInput;
+    input = new KPAutorisationTokenInput();
+    input.init(
+      {
+       refresh_token: 'Existing refresh token from previous call',
+       client_id: '',
+       client_secret: '',
+       grant_type: 'authorization_code'
+      });
+    this._keyPayServiceProxy.clientGetAutorisationTokenKeyPay(input)
+        .finally(() => {
+            this.busyTesting = false;
+        })
+        .subscribe((result: KPAutorisationTokenOutput) => {
+            if (result !== undefined) {
+              this.access_token = result.access_token;
+              this.kpUser.refresherToken = result.refresh_token;
+              this.notify.info('Successfully retrieved the authorisation token.');
+            }
+        });
+
+    this.busyAuth = false;
+  }
+
+
+
+    //step 3
+    refreshAuthoriseTokenKeyPay(): void {
+      this.busyAuth = true;
+      this.access_token = undefined;
+      
+      let input: KPAutorisationRefreshTokenInput;
+      input = new KPAutorisationRefreshTokenInput();
+      input.init(
+         {
+          refresh_token: 'Existing refresh token from previous call',
+          client_id: '',
+          client_secret: '',
+          grant_type: 'authorization_code'
+         });
+
+      this._keyPayServiceProxy.clientAutorisationRefreshTokenKeyPay(input)
+          .finally(() => {
+              this.busyTesting = false;
+          })
+          .subscribe((result: KPAutorisationRefreshTokenOutput) => {
+              if (result !== undefined) {
+                  this.access_token = result.access_token;
+                  this.kpUser.refresherToken = result.access_token;
+                  this.notify.info('Successfully refreshed the authorisation token.');
+              }
+          });
+  
+      this.busyAuth = false;
+    }
+
+    */
+
+
 }

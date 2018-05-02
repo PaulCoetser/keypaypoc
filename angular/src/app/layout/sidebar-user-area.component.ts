@@ -2,6 +2,7 @@
 import { Router } from '@angular/router';
 import { AppComponentBase } from '@shared/app-component-base';
 import { AppAuthService } from '@shared/auth/app-auth.service';
+import { PermissionCheckerService } from 'abp-ng2-module/src/auth/permission-checker.service';
 
 @Component({
     templateUrl: './sidebar-user-area.component.html',
@@ -15,7 +16,8 @@ export class SideBarUserAreaComponent extends AppComponentBase implements OnInit
     constructor(
         injector: Injector,
         private router: Router,
-        private _authService: AppAuthService
+        private _authService: AppAuthService,
+        private _permissionChecker: PermissionCheckerService
     ) {
         super(injector);
     }
@@ -30,5 +32,9 @@ export class SideBarUserAreaComponent extends AppComponentBase implements OnInit
 
     keypayconfig(): void {
         this.router.navigate(['/app/keypayconfig']);
+    }
+
+    haveAccessToKeyPayConfigRole(): boolean {
+        return (this._permissionChecker.isGranted('Payroll'));
     }
 }

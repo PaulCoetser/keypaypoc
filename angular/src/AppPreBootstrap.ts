@@ -26,6 +26,7 @@ export class AppPreBootstrap {
             AppConsts.appBaseUrl = result.appBaseUrl;
             AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
             AppConsts.remoteKeyPayServiceBaseUrl = result.remoteKeyPayServiceBaseUrl;
+            AppConsts.remoteSageServiceBaseUrl = result.remoteSageServiceBaseUrl;
             callback();
         });
     }

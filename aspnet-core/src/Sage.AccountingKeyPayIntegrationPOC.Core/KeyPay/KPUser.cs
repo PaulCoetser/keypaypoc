@@ -7,30 +7,26 @@ using System.Text;
 
 namespace Sage.AccountingKeyPayIntegrationPOC.KeyPay
 {
-  [Table("KPUser")]
-  public class KPUser : Entity<int>
-  {
-    //the PK of this object is the same a
+    [Table("KPUser")]
+    public class KPUser : Entity<int>
+    {
+        //the PK of this object is the same a
 
-    public KPUser() { }
+        public KPUser() { }
 
-    public const int MaxRefresherTokenLength = 64;
-    public const int MaxApiKeyLength = 32;
+        public const int MaxApiKeyLength = 128;
 
-    [StringLength(MaxRefresherTokenLength)]
-    public string RefresherToken { get; set; }
+        [Required]
+        public long UserId { get; set; }
 
-    [Required]
-    public long UserId { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User SystemUser { get; set; }
 
-    [ForeignKey("UserId")]
-    public virtual User SystemUser { get; set; }
+        [Required]
+        [StringLength(MaxApiKeyLength)]
+        public string KPApiKey { get; set; }
 
-    [Required]
-    [StringLength(MaxApiKeyLength)]
-    public string KPApiKey { get; set; }
-
-    public long KPUserId { get; set; }
-  }
+        public long KPUserId { get; set; }
+    }
 
 }

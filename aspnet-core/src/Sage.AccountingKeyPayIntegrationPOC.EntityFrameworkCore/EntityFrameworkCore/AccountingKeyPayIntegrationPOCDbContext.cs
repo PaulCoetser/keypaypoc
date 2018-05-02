@@ -16,6 +16,15 @@ namespace Sage.AccountingKeyPayIntegrationPOC.EntityFrameworkCore
     public AccountingKeyPayIntegrationPOCDbContext(DbContextOptions<AccountingKeyPayIntegrationPOCDbContext> options)
             : base(options)
         {
+
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<KPUser>()
+                        .HasIndex(x => x.KPApiKey).IsUnique();
+            base.OnModelCreating(modelBuilder);
+        }
+
     }
 }

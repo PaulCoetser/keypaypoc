@@ -39,6 +39,26 @@ import { KeypayconfigComponent } from './keypayconfig/keypayconfig.component';
 import { KeyPayHttpInterceptor } from 'keypayHttpInterceptor';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { ChartOfAccountsComponent } from './chart-of-accounts/chart-of-accounts.component';
+import { CompanySetupComponent } from './company-setup/company-setup.component';
+import { IframeComponent } from './iframe/iframe.component';
+import { PayrollJournalsComponent } from './payroll-journals/payroll-journals.component';
+
+
+
+
+import { Pipe, PipeTransform } from '@angular/core';
+import { DomSanitizer} from '@angular/platform-browser';
+
+@Pipe({ name: 'safe' })
+export class SafePipe implements PipeTransform {
+  constructor(private sanitizer: DomSanitizer) {}
+  transform(url) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+}
+
+
 
 
 @NgModule({
@@ -61,7 +81,12 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
         SideBarNavComponent,
         SideBarFooterComponent,
         RightSideBarComponent,
-        KeypayconfigComponent
+        KeypayconfigComponent,
+        ChartOfAccountsComponent,
+        CompanySetupComponent,
+        IframeComponent,
+        PayrollJournalsComponent,
+        SafePipe
     ],
     imports: [
         CommonModule,

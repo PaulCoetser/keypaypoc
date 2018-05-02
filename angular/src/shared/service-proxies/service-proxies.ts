@@ -1533,7 +1533,6 @@ export class UserServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                Authorization: "Basic koos",
                 "Content-Type": "application/json", 
                 "Accept": "application/json"
             })
@@ -1726,7 +1725,6 @@ export class UserServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                Authorization : 'Basic koos',
                 "Content-Type": "application/json", 
                 "Accept": "application/json"
             })
@@ -2017,7 +2015,6 @@ export interface IChangeUiThemeInput {
 }
 
 export class KPUserDto implements IKPUserDto {
-    refresherToken: string | undefined;
     userId: number;
     systemUser: User | undefined;
     kpApiKey: string;
@@ -2035,7 +2032,6 @@ export class KPUserDto implements IKPUserDto {
 
     init(data?: any) {
         if (data) {
-            this.refresherToken = data["refresherToken"];
             this.userId = data["userId"];
             this.systemUser = data["systemUser"] ? User.fromJS(data["systemUser"]) : <any>undefined;
             this.kpApiKey = data["kpApiKey"];
@@ -2053,7 +2049,6 @@ export class KPUserDto implements IKPUserDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["refresherToken"] = this.refresherToken;
         data["userId"] = this.userId;
         data["systemUser"] = this.systemUser ? this.systemUser.toJSON() : <any>undefined;
         data["kpApiKey"] = this.kpApiKey;
@@ -2071,7 +2066,6 @@ export class KPUserDto implements IKPUserDto {
 }
 
 export interface IKPUserDto {
-    refresherToken: string | undefined;
     userId: number;
     systemUser: User | undefined;
     kpApiKey: string;
